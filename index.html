@@ -8,13 +8,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
+            /* Warna Resmi PosIND */
             --delft-blue: #1C2D5A;
             --cinnabar: #EF4123;
+            /* Warna Tema Haji/Umrah */
             --hajj-green: #14452F;
             --hajj-gold: #D4AF37;
             --bg-light: #F4F6F9;
@@ -30,9 +34,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            /* Background Pola Islami Halus (Arabesque SVG) */
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231c2d5a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
+        /* Header dengan Logo Danantara & PosIND */
         .header {
             width: 100%;
             background-color: #ffffff;
@@ -50,6 +56,7 @@
             object-fit: contain;
         }
 
+        /* Container Form */
         .main-wrapper {
             flex: 1;
             display: flex;
@@ -71,6 +78,7 @@
             overflow: hidden;
         }
 
+        /* Aksen hijau Islami di atas Card */
         .container::before {
             content: '';
             position: absolute;
@@ -106,6 +114,7 @@
             color: var(--cinnabar);
         }
 
+        /* Styling Tab / Switcher */
         .tab-container {
             display: flex;
             background-color: #f0f2f5;
@@ -158,6 +167,7 @@
             color: var(--delft-blue);
         }
 
+        /* Styling Input Field dengan Icon */
         .input-wrapper {
             position: relative;
         }
@@ -193,6 +203,12 @@
             box-shadow: 0 0 0 4px rgba(28, 45, 90, 0.1);
         }
 
+        input[type="text"]:focus + i, 
+        .input-wrapper input:focus ~ i {
+            color: var(--delft-blue);
+        }
+
+        /* Styling Tombol Proses */
         .submit-btn {
             width: 100%;
             background-color: var(--cinnabar);
@@ -219,8 +235,29 @@
             box-shadow: 0 6px 20px rgba(239, 65, 35, 0.4);
         }
 
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
         canvas {
             display: none; 
+        }
+
+        /* Responsiveness */
+        @media (max-width: 500px) {
+            .header {
+                padding: 15px 20px;
+            }
+            .header img {
+                height: 35px;
+            }
+            .container {
+                padding: 30px 20px;
+            }
+            .tab-btn {
+                font-size: 13px;
+                padding: 10px 5px;
+            }
         }
     </style>
 </head>
@@ -249,7 +286,7 @@
         </div>
 
         <div class="form-group">
-            <label for="kbihName">Nama KBIH / PIHK / Travel Agent</label>
+            <label for="kbihName" id="labelName">Nama KBIH / PIHK / Travel Agent</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-building-user"></i>
                 <input type="text" id="kbihName" placeholder="Contoh: KBIH BAITUL MUSLIMIN">
@@ -273,71 +310,153 @@
 <canvas id="canvas"></canvas>
 
 <script>
+    // State Aplikasi
     let currentType = 'KHI'; 
+    
+    // Inisialisasi Gambar Template
     let templateImg = new Image();
     templateImg.crossOrigin = "anonymous"; 
     templateImg.src = 'template-kosong-KHI.png'; 
 
+    // Fungsi untuk berganti Tab
     function switchTab(type) {
         currentType = type;
-        document.getElementById('tab-KHI').classList.toggle('active', type === 'KHI');
-        document.getElementById('tab-KUI').classList.toggle('active', type === 'KUI');
-        document.getElementById('dynamicSubtitle').innerText = type === 'KHI' ? 'Kargo Haji Indonesia' : 'Kargo Umroh Indonesia';
-        document.getElementById('kbihName').placeholder = type === 'KHI' ? 'Contoh: KBIH BAITUL MUSLIMIN' : 'Contoh: TRAVEL CAHAYA UMROH';
-        templateImg.src = 'template-kosong-' + type + '.png';
+
+        // Update Class Active di Tombol Tab
+        document.getElementById('tab-KHI').classList.remove('active');
+        document.getElementById('tab-KUI').classList.remove('active');
+        document.getElementById('tab-' + type).classList.add('active');
+
+        // Update Source Gambar & Teks UI
+        const subtitleEl = document.getElementById('dynamicSubtitle');
+        const inputPlaceholder = document.getElementById('kbihName');
+
+        if (type === 'KHI') {
+            templateImg.src = 'template-kosong-KHI.png';
+            subtitleEl.innerText = 'Kargo Haji Indonesia';
+            inputPlaceholder.placeholder = 'Contoh: KBIH BAITUL MUSLIMIN';
+        } else {
+            templateImg.src = 'template-kosong-KUI.png';
+            subtitleEl.innerText = 'Kargo Umroh Indonesia';
+            inputPlaceholder.placeholder = 'Contoh: TRAVEL CAHAYA UMROH';
+        }
     }
 
+    // Fungsi Generate Gambar
     function generateCard() {
         const kbihName = document.getElementById('kbihName').value;
         const refCode = document.getElementById('refCode').value;
         const btn = document.getElementById('btnProses');
 
-        if (!templateImg.complete) return alert('Template sedang dimuat...');
-        if (!kbihName || !refCode) return alert('Data tidak lengkap!');
+        if (!templateImg.complete || templateImg.naturalWidth === 0) {
+            alert('Template sedang dimuat dari server, silakan tunggu beberapa detik dan coba lagi.');
+            return;
+        }
+        if (!kbihName || !refCode) {
+            alert('Nama Instansi/Travel dan Kode Referral harus diisi!');
+            return;
+        }
 
+        // Efek loading pada tombol
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // --- KOORDINAT KALIBRASI ULANG 100% PRESISE ---
-        let cfg = (currentType === 'KHI') ? {
-            titleY: 320, qrX: 95, qrY: 475, qrSize: 490, codeY: 1045
-        } : {
-            titleY: 320, qrX: 135, qrY: 485, qrSize: 450, codeY: 980
-        };
+        // Konfigurasi Kordinat Presisi Mutlak (SANGAT BERBEDA ANTARA KHI & KUI)
+        let cfg = {};
+        
+        if (currentType === 'KHI') {
+            // KOORDINAT KARGO HAJI
+            cfg = {
+                titleY: 200,   // DITARIK KE ATAS (Sebelumnya 240, Bapak bilang terlalu bawah)
+                qrX: 95,       // Pas margin kiri kotak putih KHI
+                qrY: 395,      // Mulai dari area putih KHI
+                qrSize: 510,   // Ukuran kotak KHI besar
+                codeY: 980     // Tengah-tengah kapsul hijau KHI
+            };
+        } else {
+            // KOORDINAT KARGO UMROH (Sesuai Bapak bilang nama travel pas di Y=150)
+            cfg = {
+                titleY: 150,   // Bapak bilang nama travelnya sudah pas di sini.
+                qrX: 75,       // Margin kiri kotak putih KUI lebih mepet
+                qrY: 180,      // DINAINKAN DRASTIS (Sebelumnya 245, Bapak bilang meleset)
+                qrSize: 480,   // Ukuran kotak KUI lebih kecil
+                codeY: 530     // DINAINKAN DRASTIS (Sebelumnya 785, agar di tengah kapsul hijau KUI)
+            };
+        }
 
         setTimeout(() => {
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 1280; canvas.height = 1920;
 
-            ctx.drawImage(templateImg, 0, 0, 1280, 1920);
+            // Menggunakan dimensi absolut 1280x1920
+            canvas.width = 1280;
+            canvas.height = 1920;
 
-            const nK = kbihName.toUpperCase();
-            const cK = refCode.toUpperCase();
+            // 1. Gambar Background Template
+            ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-            // Judul
-            ctx.font = "bold 70px Arial Black"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            ctx.fillStyle = "#E84F2A"; ctx.strokeStyle = "white"; ctx.lineWidth = 10; ctx.lineJoin = "round";
-            ctx.strokeText(nK, 640, cfg.titleY, 1180); ctx.fillText(nK, 640, cfg.titleY, 1180);
+            // 2. Gambar Teks Nama KBIH/Travel (Otomatis Kapital)
+            const namaKapital = kbihName.toUpperCase();
+            const kodeKapital = refCode.toUpperCase();
 
-            // QR Code
+            ctx.font = "bold 65px 'Arial Black', Impact, sans-serif"; 
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            
+            ctx.fillStyle = "#E84F2A"; // Warna font oranye
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 10; 
+            ctx.lineJoin = "round"; 
+            ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+
+            // Batas maksimal lebar teks agar tidak menabrak pinggir gambar
+            ctx.strokeText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
+            ctx.fillText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
+
+            ctx.shadowColor = "transparent";
+
+            // 3. Generate QR Code
             const qrCanvas = document.createElement('canvas');
-            new QRious({ element: qrCanvas, value: cK, size: cfg.qrSize, padding: 25, level: 'H' });
+            new QRious({
+                element: qrCanvas,
+                value: kodeKapital,
+                size: cfg.qrSize, 
+                padding: 25, 
+                level: 'H'
+            });
+
+            // Tumpuk kotak putih tambahan untuk memastikan area QR Code tertutup bersih
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize);
             ctx.drawImage(qrCanvas, cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize); 
 
-            // Referral Code
-            ctx.font = "bold 55px Arial Bold"; ctx.fillStyle = "#FFD700";
-            ctx.fillText(cK, cfg.qrX + (cfg.qrSize / 2), cfg.codeY);
+            // 4. Gambar Teks Kode Referral di Dalam Kapsul Hijau
+            ctx.font = "bold 50px 'Arial Bold', 'Helvetica Neue', sans-serif"; 
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#FFD700"; // Kuning emas
+            
+            const textX = cfg.qrX + (cfg.qrSize / 2); 
+            ctx.fillText(kodeKapital, textX, cfg.codeY);
 
+            // 5. Proses Download
             const link = document.createElement('a');
-            link.download = `Referral_${currentType}_${nK.replace(/\s+/g, '_')}.png`;
+            const typeString = currentType === 'KHI' ? 'Haji' : 'Umroh';
+            link.download = `Referral_${typeString}_${namaKapital.replace(/\s+/g, '_')}_${kodeKapital}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            btn.innerHTML = originalText; btn.style.pointerEvents = 'auto';
+            // Kembalikan tombol ke keadaan semula
+            btn.innerHTML = originalText;
+            btn.style.pointerEvents = 'auto';
+
         }, 100); 
     }
 </script>
+
 </body>
 </html>
