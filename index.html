@@ -310,7 +310,7 @@
 
 <script>
     // State Aplikasi
-    let currentType = 'KHI'; // Default ke Kargo Haji
+    let currentType = 'KHI'; 
     
     // Inisialisasi Gambar Template
     let templateImg = new Image();
@@ -359,28 +359,14 @@
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // Set kordinat berdasarkan jenis tab yang dipilih
-        let cfg = {};
-        
-        if (currentType === 'KHI') {
-            // Kordinat untuk Template Kargo Haji (Lebih ke bawah)
-            cfg = {
-                titleY: 320,
-                qrX: 85,
-                qrY: 455,
-                qrSize: 510,
-                codeY: 1022
-            };
-        } else {
-            // Kordinat untuk Template Kargo Umroh (Lebih ke atas)
-            cfg = {
-                titleY: 160,
-                qrX: 65,
-                qrY: 245,
-                qrSize: 460,
-                codeY: 745
-            };
-        }
+        // Koordinat disamakan kembali karena layout template KHI dan KUI ternyata identik
+        const cfg = {
+            titleY: 320,
+            qrX: 85,
+            qrY: 455,
+            qrSize: 510,
+            codeY: 1022
+        };
 
         setTimeout(() => {
             const canvas = document.getElementById('canvas');
@@ -392,7 +378,7 @@
             // 1. Gambar Background Template
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-            // 2. Gambar Teks Nama KBIH/Travel menggunakan kordinat spesifik
+            // 2. Gambar Teks Nama KBIH/Travel 
             ctx.font = "bold 70px 'Arial Black', Impact, sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
