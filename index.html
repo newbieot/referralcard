@@ -362,26 +362,26 @@
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // Konfigurasi Kordinat Presisi Mutlak (SANGAT BERBEDA ANTARA KHI & KUI)
+        // PISAHKAN KOORDINAT SECARA TOTAL KARENA TEMPLATE SANGAT BERBEDA
         let cfg = {};
         
         if (currentType === 'KHI') {
-            // KOORDINAT KARGO HAJI
+            // KOORDINAT KARGO HAJI (Posisi Jauh Lebih Bawah & Lebar)
             cfg = {
-                titleY: 200,   // DITARIK KE ATAS (Sebelumnya 240, Bapak bilang terlalu bawah)
-                qrX: 95,       // Pas margin kiri kotak putih KHI
-                qrY: 395,      // Mulai dari area putih KHI
-                qrSize: 510,   // Ukuran kotak KHI besar
-                codeY: 980     // Tengah-tengah kapsul hijau KHI
+                titleY: 320,   // Di area abu-abu di atas garis emas
+                qrX: 85,     // Pas margin kiri kotak putih KHI
+                qrY: 455,    // Mulai dari area putih KHI
+                qrSize: 510, // Ukuran kotak KHI besar
+                codeY: 1022   // Tengah-tengah kapsul hijau KHI
             };
         } else {
-            // KOORDINAT KARGO UMROH (Sesuai Bapak bilang nama travel pas di Y=150)
+            // KOORDINAT KARGO UMROH (Posisi Jauh Lebih Atas & Sempit)
             cfg = {
-                titleY: 150,   // Bapak bilang nama travelnya sudah pas di sini.
-                qrX: 75,       // Margin kiri kotak putih KUI lebih mepet
-                qrY: 180,      // DINAINKAN DRASTIS (Sebelumnya 245, Bapak bilang meleset)
-                qrSize: 480,   // Ukuran kotak KUI lebih kecil
-                codeY: 530     // DINAINKAN DRASTIS (Sebelumnya 785, agar di tengah kapsul hijau KUI)
+                titleY: 190, // Ruang kosong di antara Header dan garis emas KUI
+                qrX: 65,     // Margin kiri kotak putih KUI lebih mepet
+                qrY: 245,    // Mulai jauh di atas (langsung di bawah garis emas KUI)
+                qrSize: 460, // Ukuran kotak KUI lebih kecil
+                codeY: 678   // Tengah-tengah kapsul hijau KUI
             };
         }
 
@@ -400,7 +400,7 @@
             const namaKapital = kbihName.toUpperCase();
             const kodeKapital = refCode.toUpperCase();
 
-            ctx.font = "bold 65px 'Arial Black', Impact, sans-serif"; 
+            ctx.font = "bold 70px 'Arial Black', Impact, sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             
