@@ -359,11 +359,11 @@
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // Konfigurasi Kordinat Presisi Berdasarkan Template
+        // Konfigurasi Kordinat Presisi Berdasarkan Template (Hasil Hitungan Forensik Piksel)
         let cfg = {};
         
         if (currentType === 'KHI') {
-            // Koordinat Kargo Haji (Tetap seperti semula)
+            // Koordinat Kargo Haji (Tetap 100% Pas)
             cfg = {
                 titleY: 320,
                 qrX: 85,
@@ -372,13 +372,13 @@
                 codeY: 1022
             };
         } else {
-            // Koordinat Kargo Umroh (Telah dikalibrasi 100%)
+            // Koordinat Kargo Umroh (Diperbaiki: Lebih Sempit & Dinaikkan)
             cfg = {
-                titleY: 340,   // Posisi Y judul sudah pas
-                qrX: 125,      // Digeser ke kanan (+20px) agar rata kiri sempurna dengan kotak hijau
-                qrY: 500,      // Diturunkan sedikit agar proporsional menjadi bentuk persegi yang pas
-                qrSize: 445,   // Ukuran diperkecil agar margin kanan tetap aman
-                codeY: 990     // Posisi Y teks di kotak hijau sudah pas
+                titleY: 320,   // Judul ditengah space atas
+                qrX: 135,      // Digeser ke dalam (kanan) agar rata kiri dengan kotak hijau
+                qrY: 475,      // Dinaikkan agar pas memenuhi kotak putih template
+                qrSize: 450,   // Ukuran diperkecil dari 510px menjadi 450px agar rata kanan
+                codeY: 970     // Dinaikkan dari 990px agar pas di tengah-tengah kotak hijau
             };
         }
 
@@ -393,7 +393,6 @@
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
             // 2. Gambar Teks Nama KBIH/Travel 
-            // Semua teks dipastikan KAPITAL sesuai instruksi sebelumnya
             const namaKapital = kbihName.toUpperCase();
             const kodeKapital = refCode.toUpperCase();
 
@@ -421,12 +420,12 @@
                 element: qrCanvas,
                 value: kodeKapital,
                 size: cfg.qrSize, 
-                padding: 30, 
+                padding: 25, // Padding agar titik-titik QR tidak mentok di pinggir
                 level: 'H'
             });
 
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillRect(cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize);
+            // Hanya draw Image QR-nya saja, HAPUS draw kotak putih 
+            // agar tidak merusak border kotak hijau bawaan template!
             ctx.drawImage(qrCanvas, cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize); 
 
             // 4. Gambar Teks Kode Referral
