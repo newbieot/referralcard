@@ -8,9 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -344,14 +342,28 @@
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // Konfigurasi Presisi Mutlak (Sama untuk KHI & KUI karena templatenya geometris identik)
-        const cfg = {
-            titleY: 190,   // Ditarik ke atas agar pas di antara Logo dan Garis Emas
-            qrX: 100,      // Ditarik ke dalam agar tidak tumpah ke luar kotak hijau
-            qrY: 480,      // Diturunkan sedikit ke dalam area putih
-            qrSize: 470,   // Diperkecil agar rata sempurna di dalam template
-            codeY: 1022    // Tetap, karena terbukti presisi di tengah kotak hijau
-        };
+        // PISAHKAN KOORDINAT SECARA TOTAL KARENA TEMPLATE SANGAT BERBEDA
+        let cfg = {};
+        
+        if (currentType === 'KHI') {
+            // KOORDINAT KARGO HAJI (Posisi Jauh Lebih Bawah & Lebar)
+            cfg = {
+                titleY: 240, // Di area abu-abu di atas garis emas
+                qrX: 95,     // Pas margin kiri kotak putih KHI
+                qrY: 395,    // Mulai dari area putih KHI
+                qrSize: 510, // Ukuran kotak KHI besar
+                codeY: 980   // Tengah-tengah kapsul hijau KHI
+            };
+        } else {
+            // KOORDINAT KARGO UMROH (Posisi Jauh Lebih Atas & Sempit)
+            cfg = {
+                titleY: 150, // Ruang kosong di antara Header dan garis emas KUI
+                qrX: 75,     // Margin kiri kotak putih KUI lebih mepet
+                qrY: 245,    // Mulai jauh di atas (langsung di bawah garis emas KUI)
+                qrSize: 480, // Ukuran kotak KUI lebih kecil
+                codeY: 785   // Tengah-tengah kapsul hijau KUI
+            };
+        }
 
         setTimeout(() => {
             const canvas = document.getElementById('canvas');
@@ -360,10 +372,10 @@
             canvas.width = 1280;
             canvas.height = 1920;
 
-            // 1. Render Template
+            // 1. Render Template Background
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-            // 2. Render Nama Instansi (Otomatis Kapital)
+            // 2. Render Nama Instansi (Paksa Huruf Kapital)
             const namaKapital = kbihName.toUpperCase();
             const kodeKapital = refCode.toUpperCase();
 
@@ -379,25 +391,25 @@
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
 
-            // Menambahkan batas lebar (1180px) agar teks panjang mengecil otomatis dan tidak keluar frame
+            // Batas maksimal lebar teks agar tidak menabrak pinggir gambar
             ctx.strokeText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
             ctx.fillText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
 
             ctx.shadowColor = "transparent";
 
-            // 3. Render QR Code (Aman di dalam kotak)
+            // 3. Render QR Code Tepat ke Dalam Kotaknya
             const qrCanvas = document.createElement('canvas');
             new QRious({
                 element: qrCanvas,
                 value: kodeKapital,
                 size: cfg.qrSize, 
-                padding: 15, 
+                padding: 15, // Memberi ruang putih sedikit di pinggir QR
                 level: 'H'
             });
 
             ctx.drawImage(qrCanvas, cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize); 
 
-            // 4. Render Teks Kode Referral
+            // 4. Render Teks Kode Referral di Dalam Kapsul Hijau
             ctx.font = "bold 50px 'Arial Bold', 'Helvetica Neue', sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
