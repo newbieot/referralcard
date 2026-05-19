@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Referral Card - Kargo Haji PosIND</title>
+    <title>Generator Referral Card - PosIND</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@
 
         .title-section {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
         }
 
         h2 {
@@ -106,6 +106,52 @@
             color: #666;
             margin: 0;
             font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .subtitle-bold {
+            font-weight: 600;
+            color: var(--cinnabar);
+        }
+
+        /* Styling Tab / Switcher */
+        .tab-container {
+            display: flex;
+            background-color: #f0f2f5;
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 10px;
+            font-family: 'Gantari', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-btn.active {
+            color: var(--delft-blue);
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--delft-blue);
         }
 
         .form-group {
@@ -161,8 +207,8 @@
             color: var(--delft-blue);
         }
 
-        /* Styling Tombol */
-        button {
+        /* Styling Tombol Proses */
+        .submit-btn {
             width: 100%;
             background-color: var(--cinnabar);
             color: white;
@@ -182,13 +228,13 @@
             box-shadow: 0 4px 15px rgba(239, 65, 35, 0.3);
         }
 
-        button:hover {
+        .submit-btn:hover {
             background-color: #d8351a;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(239, 65, 35, 0.4);
         }
 
-        button:active {
+        .submit-btn:active {
             transform: translateY(0);
         }
 
@@ -207,6 +253,10 @@
             .container {
                 padding: 30px 20px;
             }
+            .tab-btn {
+                font-size: 13px;
+                padding: 10px 5px;
+            }
         }
     </style>
 </head>
@@ -219,15 +269,25 @@
 
 <div class="main-wrapper">
     <div class="container">
+        
         <div class="title-section">
             <h2>Referral Generator</h2>
-            <p class="subtitle">Sistem Pembuatan Kartu Kargo Haji Indonesia</p>
+            <p class="subtitle">Sistem Pembuatan Kartu <span class="subtitle-bold" id="dynamicSubtitle">Kargo Haji Indonesia</span></p>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-btn active" id="tab-KHI" onclick="switchTab('KHI')">
+                <i class="fa-solid fa-kaaba"></i> Kargo Haji
+            </button>
+            <button class="tab-btn" id="tab-KUI" onclick="switchTab('KUI')">
+                <i class="fa-solid fa-plane-departure"></i> Kargo Umroh
+            </button>
         </div>
 
         <div class="form-group">
-            <label for="kbihName">Nama KBIH / PIHK / Travel Agent</label>
+            <label for="kbihName" id="labelName">Nama KBIH / PIHK / Travel Agent</label>
             <div class="input-wrapper">
-                <i class="fa-solid fa-kaaba"></i>
+                <i class="fa-solid fa-building-user"></i>
                 <input type="text" id="kbihName" placeholder="Contoh: KBIH BAITUL MUSLIMIN" oninput="this.value = this.value.toUpperCase()">
             </div>
         </div>
@@ -240,7 +300,7 @@
             </div>
         </div>
 
-        <button id="btnProses" onclick="generateCard()">
+        <button class="submit-btn" id="btnProses" onclick="generateCard()">
             <i class="fa-solid fa-download"></i> Buat & Unduh Kartu
         </button>
     </div>
@@ -249,11 +309,39 @@
 <canvas id="canvas"></canvas>
 
 <script>
-    // Memuat gambar secara otomatis saat halaman dibuka
+    // State Aplikasi
+    let currentType = 'KHI'; // Default ke Kargo Haji
+    
+    // Inisialisasi Gambar Template
     let templateImg = new Image();
     templateImg.crossOrigin = "anonymous"; 
     templateImg.src = 'template-kosong-KHI.png'; 
 
+    // Fungsi untuk berganti Tab
+    function switchTab(type) {
+        currentType = type;
+
+        // Update Class Active di Tombol Tab
+        document.getElementById('tab-KHI').classList.remove('active');
+        document.getElementById('tab-KUI').classList.remove('active');
+        document.getElementById('tab-' + type).classList.add('active');
+
+        // Update Source Gambar & Teks UI
+        const subtitleEl = document.getElementById('dynamicSubtitle');
+        const inputPlaceholder = document.getElementById('kbihName');
+
+        if (type === 'KHI') {
+            templateImg.src = 'template-kosong-KHI.png';
+            subtitleEl.innerText = 'Kargo Haji Indonesia';
+            inputPlaceholder.placeholder = 'Contoh: KBIH BAITUL MUSLIMIN';
+        } else {
+            templateImg.src = 'template-kosong-KUI.png';
+            subtitleEl.innerText = 'Kargo Umroh Indonesia';
+            inputPlaceholder.placeholder = 'Contoh: TRAVEL CAHAYA UMROH';
+        }
+    }
+
+    // Fungsi Generate Gambar
     function generateCard() {
         const kbihName = document.getElementById('kbihName').value;
         const refCode = document.getElementById('refCode').value;
@@ -264,7 +352,7 @@
             return;
         }
         if (!kbihName || !refCode) {
-            alert('Nama KBIH dan Kode Referral harus diisi!');
+            alert('Nama Instansi/Travel dan Kode Referral harus diisi!');
             return;
         }
 
@@ -273,24 +361,24 @@
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // Timeout kecil agar UI sempat me-render efek loading sebelum canvas membekukan thread
+        // Timeout kecil agar UI sempat me-render efek loading
         setTimeout(() => {
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Menggunakan dimensi absolut 1280x1920
+            // Menggunakan dimensi absolut 1280x1920 (Karena ukuran KHI & KUI sama)
             canvas.width = 1280;
             canvas.height = 1920;
 
             // 1. Gambar Background Template
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-            // 2. Gambar Teks Nama KBIH
+            // 2. Gambar Teks Nama KBIH/Travel
             ctx.font = "bold 70px 'Arial Black', Impact, sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             
-            ctx.fillStyle = "#E84F2A"; // Warna font menyesuaikan orange desain
+            ctx.fillStyle = "#E84F2A"; // Warna font oranye
             ctx.strokeStyle = "white";
             ctx.lineWidth = 10; 
             ctx.lineJoin = "round"; 
@@ -327,7 +415,7 @@
             ctx.font = "bold 50px 'Arial Bold', 'Helvetica Neue', sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillStyle = "#FFD700"; 
+            ctx.fillStyle = "#FFD700"; // Kuning emas
             
             const codeX = qrAreaX + (qrAreaSize / 2); 
             const codeY = 1022; 
@@ -336,7 +424,10 @@
 
             // 5. Proses Download
             const link = document.createElement('a');
-            link.download = `Referral_${kbihName.replace(/\s+/g, '_')}_${refCode}.png`;
+            
+            // Nama file dinamis sesuai tab yang dipilih
+            const typeString = currentType === 'KHI' ? 'Haji' : 'Umroh';
+            link.download = `Referral_${typeString}_${kbihName.replace(/\s+/g, '_')}_${refCode}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
@@ -344,7 +435,7 @@
             btn.innerHTML = originalText;
             btn.style.pointerEvents = 'auto';
 
-        }, 100); // 100ms delay
+        }, 100); 
     }
 </script>
 
