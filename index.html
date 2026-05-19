@@ -78,7 +78,7 @@
 
     <div class="form-group">
         <label for="refCode">2. Kode Referral</label>
-        <input type="text" id="refCode" placeholder="Contoh: EFRWBY01" oninput="this.value = this.value.toUpperCase()">
+        <input type="text" id="refCode" placeholder="Contoh: PKUS0701" oninput="this.value = this.value.toUpperCase()">
     </div>
 
     <button onclick="generateCard()">Proses & Download PNG</button>
@@ -115,16 +115,17 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        canvas.width = templateImg.width;
-        canvas.height = templateImg.height;
+        // Menggunakan dimensi absolut 1280x1920
+        canvas.width = 1280;
+        canvas.height = 1920;
 
         // 1. Gambar Background Template
-        ctx.drawImage(templateImg, 0, 0);
+        ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-        // 2. Gambar Teks Nama KBIH
+        // 2. Gambar Teks Nama KBIH (Area Atas)
         ctx.font = "bold 55px 'Arial Black', Impact, sans-serif";
         ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.textBaseline = "top"; // Menggunakan 'top' untuk penempatan dari puncak area teks
         
         ctx.fillStyle = "#E84F2A"; 
         ctx.strokeStyle = "white";
@@ -134,38 +135,45 @@
         ctx.shadowOffsetX = 3;
         ctx.shadowOffsetY = 3;
 
-        const titleY = canvas.height * 0.165; 
+        // Koordinat Y absolut untuk teks nama (sekitar 150 piksel dari atas)
+        const titleY = 150; 
         ctx.strokeText(kbihName, canvas.width / 2, titleY);
         ctx.fillText(kbihName, canvas.width / 2, titleY);
 
         ctx.shadowColor = "transparent";
 
-        // 3. Generate QR Code DENGAN PADDING
+        // --- Perbaikan Posisi Referral Data ---
+
+        // 3. Generate QR Code Presisi di dalam Kotak Putih Besar
+        const qrAreaX = 65; // Koordinat X batas kiri area referral (kotak putih)
+        const qrAreaY = 240; // Koordinat Y puncak kotak putih
+        const qrAreaSize = 460; // Ukuran (lebar & tinggi) kotak putih
+
+        // Membuat kanvas QR code yang ukurannya sama dengan kotak putih
         const qrCanvas = document.createElement('canvas');
         new QRious({
             element: qrCanvas,
             value: refCode,
-            size: 320, 
-            padding: 25, 
+            size: qrAreaSize, // Menyamakan ukuran kanvas QR dengan kotak putih
+            padding: 30, // Menambahkan padding internal agar QR ditarik di tengah kotak putih
             level: 'H'
         });
 
-        const qrX = canvas.width * 0.082; 
-        const qrY = canvas.height * 0.245;
+        // Gambar QR Code (kanvas) ke dalam kotak putih di kanvas utama
+        ctx.drawImage(qrCanvas, qrAreaX, qrAreaY, qrAreaSize, qrAreaSize); 
 
-        // Gambar kotak putih murni di bawah QR Code
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(qrX, qrY, 320, 320);
-        ctx.drawImage(qrCanvas, qrX, qrY, 320, 320); 
-
-        // 4. Gambar Teks Kode Referral di dalam kotak hijau
-        ctx.font = "bold 38px 'Times New Roman', serif"; 
+        // 4. Gambar Teks Kode Referral di dalam Kotak Hijau Gelap
+        // Gunakan font sans-serif tebal berwarna kuning emas (Gold)
+        ctx.font = "bold 38px 'Arial Bold', 'Helvetica Neue', sans-serif"; // Font tebal yang bersih
         ctx.textAlign = "center";
-        ctx.textBaseline = "middle"; 
-        ctx.fillStyle = "#FFD700"; 
+        ctx.textBaseline = "middle"; // Memastikan posisi vertikal presisi di tengah kotak
+        ctx.fillStyle = "#FFD700"; // Warna Kuning Emas (Gold)
         
-        const codeX = qrX + (320 / 2); 
-        const codeY = qrY + 368; 
+        // Hitung koordinat presisi untuk teks berdasarkan area referral
+        const codeAreaHeight = 60; // Tinggi kotak hijau gelap
+        const codeX = qrAreaX + (qrAreaSize / 2); // Dipusatkan secara horizontal
+        const codeY = qrAreaY + qrAreaSize + (codeAreaHeight / 2); // Di tengah kotak hijau secara vertikal (di bawah kotak putih)
+        
         ctx.fillText(refCode, codeX, codeY);
 
         // 5. Proses Download
