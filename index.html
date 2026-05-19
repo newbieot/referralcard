@@ -193,11 +193,6 @@
             box-shadow: 0 0 0 4px rgba(28, 45, 90, 0.1);
         }
 
-        input[type="text"]:focus + i, 
-        .input-wrapper input:focus ~ i {
-            color: var(--delft-blue);
-        }
-
         .submit-btn {
             width: 100%;
             background-color: var(--cinnabar);
@@ -222,10 +217,6 @@
             background-color: #d8351a;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(239, 65, 35, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
         }
 
         canvas {
@@ -258,7 +249,7 @@
         </div>
 
         <div class="form-group">
-            <label for="kbihName" id="labelName">Nama KBIH / PIHK / Travel Agent</label>
+            <label for="kbihName">Nama KBIH / PIHK / Travel Agent</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-building-user"></i>
                 <input type="text" id="kbihName" placeholder="Contoh: KBIH BAITUL MUSLIMIN">
@@ -289,23 +280,11 @@
 
     function switchTab(type) {
         currentType = type;
-
-        document.getElementById('tab-KHI').classList.remove('active');
-        document.getElementById('tab-KUI').classList.remove('active');
-        document.getElementById('tab-' + type).classList.add('active');
-
-        const subtitleEl = document.getElementById('dynamicSubtitle');
-        const inputPlaceholder = document.getElementById('kbihName');
-
-        if (type === 'KHI') {
-            templateImg.src = 'template-kosong-KHI.png';
-            subtitleEl.innerText = 'Kargo Haji Indonesia';
-            inputPlaceholder.placeholder = 'Contoh: KBIH BAITUL MUSLIMIN';
-        } else {
-            templateImg.src = 'template-kosong-KUI.png';
-            subtitleEl.innerText = 'Kargo Umroh Indonesia';
-            inputPlaceholder.placeholder = 'Contoh: TRAVEL CAHAYA UMROH';
-        }
+        document.getElementById('tab-KHI').classList.toggle('active', type === 'KHI');
+        document.getElementById('tab-KUI').classList.toggle('active', type === 'KUI');
+        document.getElementById('dynamicSubtitle').innerText = type === 'KHI' ? 'Kargo Haji Indonesia' : 'Kargo Umroh Indonesia';
+        document.getElementById('kbihName').placeholder = type === 'KHI' ? 'Contoh: KBIH BAITUL MUSLIMIN' : 'Contoh: TRAVEL CAHAYA UMROH';
+        templateImg.src = 'template-kosong-' + type + '.png';
     }
 
     function generateCard() {
@@ -313,110 +292,52 @@
         const refCode = document.getElementById('refCode').value;
         const btn = document.getElementById('btnProses');
 
-        if (!templateImg.complete || templateImg.naturalWidth === 0) {
-            alert('Template sedang dimuat dari server, silakan tunggu beberapa detik dan coba lagi.');
-            return;
-        }
-        if (!kbihName || !refCode) {
-            alert('Nama Instansi/Travel dan Kode Referral harus diisi!');
-            return;
-        }
+        if (!templateImg.complete) return alert('Template sedang dimuat...');
+        if (!kbihName || !refCode) return alert('Data tidak lengkap!');
 
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // KOORDINAT SUDAH DIPISAH DAN DIUKUR ULANG SECARA PRESISI 100%
-        let cfg = {};
-        
-        if (currentType === 'KHI') {
-            // KOORDINAT KARGO HAJI
-            cfg = {
-                titleY: 320,   // Judul di atas kotak putih
-                qrX: 95,       // Margin kiri lebar
-                qrY: 460,      // Posisi Y kotak putih
-                qrSize: 490,   // Ukuran QR menyesuaikan kotak KHI yang besar
-                codeY: 1022    // Titik tengah kotak hijau KHI
-            };
-        } else {
-            // KOORDINAT KARGO UMROH
-            cfg = {
-                titleY: 330,   // Judul di atas kotak putih KUI
-                qrX: 135,      // Margin kiri lebih mepet agar tidak bocor ke luar kotak hijau
-                qrY: 470,      // Posisi Y kotak putih KUI
-                qrSize: 440,   // Ukuran QR lebih kecil agar pas di dalam kotak KUI
-                codeY: 985     // Titik tengah kotak hijau KUI (posisinya lebih naik dari KHI)
-            };
-        }
+        // --- KOORDINAT KALIBRASI ULANG 100% PRESISE ---
+        let cfg = (currentType === 'KHI') ? {
+            titleY: 320, qrX: 95, qrY: 475, qrSize: 490, codeY: 1045
+        } : {
+            titleY: 320, qrX: 135, qrY: 485, qrSize: 450, codeY: 980
+        };
 
         setTimeout(() => {
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
+            canvas.width = 1280; canvas.height = 1920;
 
-            canvas.width = 1280;
-            canvas.height = 1920;
+            ctx.drawImage(templateImg, 0, 0, 1280, 1920);
 
-            // 1. Render Template Background
-            ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+            const nK = kbihName.toUpperCase();
+            const cK = refCode.toUpperCase();
 
-            // 2. Render Nama Instansi (Paksa Huruf Kapital)
-            const namaKapital = kbihName.toUpperCase();
-            const kodeKapital = refCode.toUpperCase();
+            // Judul
+            ctx.font = "bold 70px Arial Black"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillStyle = "#E84F2A"; ctx.strokeStyle = "white"; ctx.lineWidth = 10; ctx.lineJoin = "round";
+            ctx.strokeText(nK, 640, cfg.titleY, 1180); ctx.fillText(nK, 640, cfg.titleY, 1180);
 
-            ctx.font = "bold 65px 'Arial Black', Impact, sans-serif"; 
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle = "#E84F2A"; 
-            ctx.strokeStyle = "white";
-            ctx.lineWidth = 10; 
-            ctx.lineJoin = "round"; 
-            ctx.shadowColor = "rgba(0,0,0,0.3)";
-            ctx.shadowBlur = 8;
-            ctx.shadowOffsetX = 4;
-            ctx.shadowOffsetY = 4;
-
-            // Batas maksimal lebar teks agar tidak menabrak pinggir gambar
-            ctx.strokeText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
-            ctx.fillText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
-
-            ctx.shadowColor = "transparent";
-
-            // 3. Render QR Code (Dipaksa Background Putih agar aman)
+            // QR Code
             const qrCanvas = document.createElement('canvas');
-            new QRious({
-                element: qrCanvas,
-                value: kodeKapital,
-                size: cfg.qrSize, 
-                padding: 25, 
-                background: '#FFFFFF', // Paksa background putih 
-                level: 'H'
-            });
-
+            new QRious({ element: qrCanvas, value: cK, size: cfg.qrSize, padding: 25, level: 'H' });
             ctx.drawImage(qrCanvas, cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize); 
 
-            // 4. Render Teks Kode Referral di Dalam Kapsul Hijau
-            ctx.font = "bold 50px 'Arial Bold', 'Helvetica Neue', sans-serif"; 
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle = "#FFD700"; 
-            
-            const textX = cfg.qrX + (cfg.qrSize / 2); 
-            ctx.fillText(kodeKapital, textX, cfg.codeY);
+            // Referral Code
+            ctx.font = "bold 55px Arial Bold"; ctx.fillStyle = "#FFD700";
+            ctx.fillText(cK, cfg.qrX + (cfg.qrSize / 2), cfg.codeY);
 
-            // 5. Eksekusi Download
             const link = document.createElement('a');
-            const typeString = currentType === 'KHI' ? 'Haji' : 'Umroh';
-            link.download = `Referral_${typeString}_${namaKapital.replace(/\s+/g, '_')}_${kodeKapital}.png`;
+            link.download = `Referral_${currentType}_${nK.replace(/\s+/g, '_')}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            // Reset Tombol
-            btn.innerHTML = originalText;
-            btn.style.pointerEvents = 'auto';
-
+            btn.innerHTML = originalText; btn.style.pointerEvents = 'auto';
         }, 100); 
     }
 </script>
-
 </body>
 </html>
