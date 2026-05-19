@@ -363,7 +363,7 @@
         let cfg = {};
         
         if (currentType === 'KHI') {
-            // Koordinat Kargo Haji
+            // Koordinat Kargo Haji (Tetap seperti semula)
             cfg = {
                 titleY: 320,
                 qrX: 85,
@@ -372,13 +372,13 @@
                 codeY: 1022
             };
         } else {
-            // Koordinat Kargo Umroh (Sesuai hasil perhitungan dari gambar error)
+            // Koordinat Kargo Umroh (Telah dikalibrasi 100%)
             cfg = {
-                titleY: 340,   // Diturunkan sedikit agar pas di ruang kosong atas
-                qrX: 105,      // Digeser ke kanan menyesuaikan margin kotak KUI
-                qrY: 485,      // Diturunkan karena kotak KUI posisinya lebih ke bawah
-                qrSize: 460,   // Ukuran kotak lebih kecil dibanding KHI
-                codeY: 990     // Dinaikkan karena posisi kotak hijau di KUI lebih tinggi
+                titleY: 340,   // Posisi Y judul sudah pas
+                qrX: 125,      // Digeser ke kanan (+20px) agar rata kiri sempurna dengan kotak hijau
+                qrY: 500,      // Diturunkan sedikit agar proporsional menjadi bentuk persegi yang pas
+                qrSize: 445,   // Ukuran diperkecil agar margin kanan tetap aman
+                codeY: 990     // Posisi Y teks di kotak hijau sudah pas
             };
         }
 
@@ -393,6 +393,10 @@
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
             // 2. Gambar Teks Nama KBIH/Travel 
+            // Semua teks dipastikan KAPITAL sesuai instruksi sebelumnya
+            const namaKapital = kbihName.toUpperCase();
+            const kodeKapital = refCode.toUpperCase();
+
             ctx.font = "bold 70px 'Arial Black', Impact, sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
@@ -406,8 +410,8 @@
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
 
-            ctx.strokeText(kbihName, canvas.width / 2, cfg.titleY);
-            ctx.fillText(kbihName, canvas.width / 2, cfg.titleY);
+            ctx.strokeText(namaKapital, canvas.width / 2, cfg.titleY);
+            ctx.fillText(namaKapital, canvas.width / 2, cfg.titleY);
 
             ctx.shadowColor = "transparent";
 
@@ -415,7 +419,7 @@
             const qrCanvas = document.createElement('canvas');
             new QRious({
                 element: qrCanvas,
-                value: refCode,
+                value: kodeKapital,
                 size: cfg.qrSize, 
                 padding: 30, 
                 level: 'H'
@@ -432,12 +436,12 @@
             ctx.fillStyle = "#FFD700"; 
             
             const textX = cfg.qrX + (cfg.qrSize / 2); 
-            ctx.fillText(refCode, textX, cfg.codeY);
+            ctx.fillText(kodeKapital, textX, cfg.codeY);
 
             // 5. Proses Download
             const link = document.createElement('a');
             const typeString = currentType === 'KHI' ? 'Haji' : 'Umroh';
-            link.download = `Referral_${typeString}_${kbihName.replace(/\s+/g, '_')}_${refCode}.png`;
+            link.download = `Referral_${typeString}_${namaKapital.replace(/\s+/g, '_')}_${kodeKapital}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
