@@ -359,14 +359,28 @@
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // Koordinat disamakan kembali karena layout template KHI dan KUI ternyata identik
-        const cfg = {
-            titleY: 320,
-            qrX: 85,
-            qrY: 455,
-            qrSize: 510,
-            codeY: 1022
-        };
+        // Konfigurasi Kordinat Presisi Berdasarkan Template
+        let cfg = {};
+        
+        if (currentType === 'KHI') {
+            // Koordinat Kargo Haji
+            cfg = {
+                titleY: 320,
+                qrX: 85,
+                qrY: 455,
+                qrSize: 510,
+                codeY: 1022
+            };
+        } else {
+            // Koordinat Kargo Umroh (Sesuai hasil perhitungan dari gambar error)
+            cfg = {
+                titleY: 340,   // Diturunkan sedikit agar pas di ruang kosong atas
+                qrX: 105,      // Digeser ke kanan menyesuaikan margin kotak KUI
+                qrY: 485,      // Diturunkan karena kotak KUI posisinya lebih ke bawah
+                qrSize: 460,   // Ukuran kotak lebih kecil dibanding KHI
+                codeY: 990     // Dinaikkan karena posisi kotak hijau di KUI lebih tinggi
+            };
+        }
 
         setTimeout(() => {
             const canvas = document.getElementById('canvas');
