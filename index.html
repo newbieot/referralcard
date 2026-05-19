@@ -15,10 +15,8 @@
 
     <style>
         :root {
-            /* Warna Resmi PosIND */
             --delft-blue: #1C2D5A;
             --cinnabar: #EF4123;
-            /* Warna Tema Haji/Umrah */
             --hajj-green: #14452F;
             --hajj-gold: #D4AF37;
             --bg-light: #F4F6F9;
@@ -34,11 +32,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Background Pola Islami Halus (Arabesque SVG) */
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231c2d5a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Header dengan Logo */
         .header {
             width: 100%;
             background-color: #ffffff;
@@ -56,7 +52,6 @@
             object-fit: contain;
         }
 
-        /* Container Form */
         .main-wrapper {
             flex: 1;
             display: flex;
@@ -78,7 +73,6 @@
             overflow: hidden;
         }
 
-        /* Aksen hijau Islami di atas Card */
         .container::before {
             content: '';
             position: absolute;
@@ -114,7 +108,6 @@
             color: var(--cinnabar);
         }
 
-        /* Styling Tab / Switcher */
         .tab-container {
             display: flex;
             background-color: #f0f2f5;
@@ -167,7 +160,6 @@
             color: var(--delft-blue);
         }
 
-        /* Styling Input Field dengan Icon */
         .input-wrapper {
             position: relative;
         }
@@ -193,6 +185,7 @@
             color: var(--delft-blue);
             background-color: #fafbfc;
             transition: all 0.3s ease;
+            text-transform: uppercase;
         }
 
         input[type="text"]:focus {
@@ -207,7 +200,6 @@
             color: var(--delft-blue);
         }
 
-        /* Styling Tombol Proses */
         .submit-btn {
             width: 100%;
             background-color: var(--cinnabar);
@@ -242,7 +234,6 @@
             display: none; 
         }
 
-        /* Responsiveness */
         @media (max-width: 500px) {
             .header {
                 padding: 15px 20px;
@@ -288,7 +279,7 @@
             <label for="kbihName" id="labelName">Nama KBIH / PIHK / Travel Agent</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-building-user"></i>
-                <input type="text" id="kbihName" placeholder="Contoh: KBIH BAITUL MUSLIMIN" oninput="this.value = this.value.toUpperCase()">
+                <input type="text" id="kbihName" placeholder="Contoh: KBIH BAITUL MUSLIMIN">
             </div>
         </div>
 
@@ -296,7 +287,7 @@
             <label for="refCode">Kode Referral</label>
             <div class="input-wrapper">
                 <i class="fa-solid fa-qrcode"></i>
-                <input type="text" id="refCode" placeholder="Contoh: PKUS0701" oninput="this.value = this.value.toUpperCase()">
+                <input type="text" id="refCode" placeholder="Contoh: PKUS0701">
             </div>
         </div>
 
@@ -309,10 +300,7 @@
 <canvas id="canvas"></canvas>
 
 <script>
-    // State Aplikasi
     let currentType = 'KHI'; 
-    
-    // Inisialisasi Gambar Template
     let templateImg = new Image();
     templateImg.crossOrigin = "anonymous"; 
     templateImg.src = 'template-kosong-KHI.png'; 
@@ -320,12 +308,10 @@
     function switchTab(type) {
         currentType = type;
 
-        // Update Class Active di Tombol Tab
         document.getElementById('tab-KHI').classList.remove('active');
         document.getElementById('tab-KUI').classList.remove('active');
         document.getElementById('tab-' + type).classList.add('active');
 
-        // Update Source Gambar & Teks UI
         const subtitleEl = document.getElementById('dynamicSubtitle');
         const inputPlaceholder = document.getElementById('kbihName');
 
@@ -354,33 +340,18 @@
             return;
         }
 
-        // Efek loading pada tombol
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // Konfigurasi Kordinat Presisi Berdasarkan Template (Hasil Hitungan Forensik Piksel)
-        let cfg = {};
-        
-        if (currentType === 'KHI') {
-            // Koordinat Kargo Haji (Tetap 100% Pas)
-            cfg = {
-                titleY: 320,
-                qrX: 85,
-                qrY: 455,
-                qrSize: 510,
-                codeY: 1022
-            };
-        } else {
-            // Koordinat Kargo Umroh (Diperbaiki: Lebih Sempit & Dinaikkan)
-            cfg = {
-                titleY: 320,   // Judul ditengah space atas
-                qrX: 135,      // Digeser ke dalam (kanan) agar rata kiri dengan kotak hijau
-                qrY: 475,      // Dinaikkan agar pas memenuhi kotak putih template
-                qrSize: 450,   // Ukuran diperkecil dari 510px menjadi 450px agar rata kanan
-                codeY: 970     // Dinaikkan dari 990px agar pas di tengah-tengah kotak hijau
-            };
-        }
+        // Konfigurasi Presisi Mutlak (Sama untuk KHI & KUI karena templatenya geometris identik)
+        const cfg = {
+            titleY: 190,   // Ditarik ke atas agar pas di antara Logo dan Garis Emas
+            qrX: 100,      // Ditarik ke dalam agar tidak tumpah ke luar kotak hijau
+            qrY: 480,      // Diturunkan sedikit ke dalam area putih
+            qrSize: 470,   // Diperkecil agar rata sempurna di dalam template
+            codeY: 1022    // Tetap, karena terbukti presisi di tengah kotak hijau
+        };
 
         setTimeout(() => {
             const canvas = document.getElementById('canvas');
@@ -389,17 +360,16 @@
             canvas.width = 1280;
             canvas.height = 1920;
 
-            // 1. Gambar Background Template
+            // 1. Render Template
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-            // 2. Gambar Teks Nama KBIH/Travel 
+            // 2. Render Nama Instansi (Otomatis Kapital)
             const namaKapital = kbihName.toUpperCase();
             const kodeKapital = refCode.toUpperCase();
 
-            ctx.font = "bold 70px 'Arial Black', Impact, sans-serif"; 
+            ctx.font = "bold 65px 'Arial Black', Impact, sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            
             ctx.fillStyle = "#E84F2A"; 
             ctx.strokeStyle = "white";
             ctx.lineWidth = 10; 
@@ -409,26 +379,25 @@
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
 
-            ctx.strokeText(namaKapital, canvas.width / 2, cfg.titleY);
-            ctx.fillText(namaKapital, canvas.width / 2, cfg.titleY);
+            // Menambahkan batas lebar (1180px) agar teks panjang mengecil otomatis dan tidak keluar frame
+            ctx.strokeText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
+            ctx.fillText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
 
             ctx.shadowColor = "transparent";
 
-            // 3. Generate QR Code
+            // 3. Render QR Code (Aman di dalam kotak)
             const qrCanvas = document.createElement('canvas');
             new QRious({
                 element: qrCanvas,
                 value: kodeKapital,
                 size: cfg.qrSize, 
-                padding: 25, // Padding agar titik-titik QR tidak mentok di pinggir
+                padding: 15, 
                 level: 'H'
             });
 
-            // Hanya draw Image QR-nya saja, HAPUS draw kotak putih 
-            // agar tidak merusak border kotak hijau bawaan template!
             ctx.drawImage(qrCanvas, cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize); 
 
-            // 4. Gambar Teks Kode Referral
+            // 4. Render Teks Kode Referral
             ctx.font = "bold 50px 'Arial Bold', 'Helvetica Neue', sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
@@ -437,14 +406,14 @@
             const textX = cfg.qrX + (cfg.qrSize / 2); 
             ctx.fillText(kodeKapital, textX, cfg.codeY);
 
-            // 5. Proses Download
+            // 5. Eksekusi Download
             const link = document.createElement('a');
             const typeString = currentType === 'KHI' ? 'Haji' : 'Umroh';
             link.download = `Referral_${typeString}_${namaKapital.replace(/\s+/g, '_')}_${kodeKapital}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            // Kembalikan tombol
+            // Reset Tombol
             btn.innerHTML = originalText;
             btn.style.pointerEvents = 'auto';
 
