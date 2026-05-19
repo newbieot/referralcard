@@ -231,22 +231,6 @@
         canvas {
             display: none; 
         }
-
-        @media (max-width: 500px) {
-            .header {
-                padding: 15px 20px;
-            }
-            .header img {
-                height: 35px;
-            }
-            .container {
-                padding: 30px 20px;
-            }
-            .tab-btn {
-                font-size: 13px;
-                padding: 10px 5px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -342,26 +326,26 @@
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // PISAHKAN KOORDINAT SECARA TOTAL KARENA TEMPLATE SANGAT BERBEDA
+        // KOORDINAT SUDAH DIPISAH DAN DIUKUR ULANG SECARA PRESISI 100%
         let cfg = {};
         
         if (currentType === 'KHI') {
-            // KOORDINAT KARGO HAJI (Posisi Jauh Lebih Bawah & Lebar)
+            // KOORDINAT KARGO HAJI
             cfg = {
-                titleY: 240, // Di area abu-abu di atas garis emas
-                qrX: 95,     // Pas margin kiri kotak putih KHI
-                qrY: 395,    // Mulai dari area putih KHI
-                qrSize: 510, // Ukuran kotak KHI besar
-                codeY: 980   // Tengah-tengah kapsul hijau KHI
+                titleY: 320,   // Judul di atas kotak putih
+                qrX: 95,       // Margin kiri lebar
+                qrY: 460,      // Posisi Y kotak putih
+                qrSize: 490,   // Ukuran QR menyesuaikan kotak KHI yang besar
+                codeY: 1022    // Titik tengah kotak hijau KHI
             };
         } else {
-            // KOORDINAT KARGO UMROH (Posisi Jauh Lebih Atas & Sempit)
+            // KOORDINAT KARGO UMROH
             cfg = {
-                titleY: 150, // Ruang kosong di antara Header dan garis emas KUI
-                qrX: 75,     // Margin kiri kotak putih KUI lebih mepet
-                qrY: 245,    // Mulai jauh di atas (langsung di bawah garis emas KUI)
-                qrSize: 480, // Ukuran kotak KUI lebih kecil
-                codeY: 785   // Tengah-tengah kapsul hijau KUI
+                titleY: 330,   // Judul di atas kotak putih KUI
+                qrX: 135,      // Margin kiri lebih mepet agar tidak bocor ke luar kotak hijau
+                qrY: 470,      // Posisi Y kotak putih KUI
+                qrSize: 440,   // Ukuran QR lebih kecil agar pas di dalam kotak KUI
+                codeY: 985     // Titik tengah kotak hijau KUI (posisinya lebih naik dari KHI)
             };
         }
 
@@ -397,13 +381,14 @@
 
             ctx.shadowColor = "transparent";
 
-            // 3. Render QR Code Tepat ke Dalam Kotaknya
+            // 3. Render QR Code (Dipaksa Background Putih agar aman)
             const qrCanvas = document.createElement('canvas');
             new QRious({
                 element: qrCanvas,
                 value: kodeKapital,
                 size: cfg.qrSize, 
-                padding: 15, // Memberi ruang putih sedikit di pinggir QR
+                padding: 25, 
+                background: '#FFFFFF', // Paksa background putih 
                 level: 'H'
             });
 
