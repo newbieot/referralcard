@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Referral Card - PosIND by Ikhsan Radiansyah</title>
+    <title>Referral Card Generator by Ikhsan Radiansyah | PosNew Hub</title>
     <link rel="icon" type="image/png" href="favicon-referralcard.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gantari:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -24,6 +23,7 @@
             --bg-light: #F4F6F9;
         }
 
+        /* STRUKTUR UTAMA AGAR FOOTER SELALU DI BAWAH */
         body {
             font-family: 'Gantari', sans-serif;
             background-color: var(--bg-light);
@@ -34,7 +34,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Background Pola Islami Halus (Arabesque SVG) */
+            /* Background Pola Islami Halus */
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231c2d5a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
@@ -58,7 +58,7 @@
 
         /* Container Form */
         .main-wrapper {
-            flex: 1;
+            flex: 1; /* Mendorong footer ke bawah */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -243,28 +243,63 @@
             display: none; 
         }
 
+        /* DASHBOARD FOOTER (UNIVERSAL & MUTLAK 1 BARIS) */
+        .dashboard-footer {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #0f172a;
+            border-top: 3px solid var(--cinnabar);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            margin-top: auto;
+            font-family: 'Gantari', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 20;
+            height: 60px; /* Mengunci tinggi agar mutlak 1 baris */
+            overflow: hidden;
+        }
+        .footer-brand {
+            display: flex; align-items: center; gap: 8px;
+            color: #f8fafc; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px;
+            white-space: nowrap; font-family: 'Sora', sans-serif;
+        }
+        .footer-desc { 
+            color: #94a3b8; font-size: 0.8rem; margin: 0 15px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            text-align: center; flex: 1;
+        }
+        .footer-creator-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(239, 65, 35, 0.1); border: 1px solid rgba(239, 65, 35, 0.2);
+            padding: 5px 14px; border-radius: 20px; color: #e2e8f0; font-size: 0.75rem;
+            white-space: nowrap; transition: all 0.3s ease;
+        }
+        .footer-creator-badge:hover { 
+            background: rgba(239, 65, 35, 0.2); border-color: rgba(239, 65, 35, 0.5); 
+        }
+        .footer-creator-badge strong { color: var(--cinnabar); font-weight: 600; }
+
         /* Responsiveness */
+        @media (max-width: 850px) {
+            .dashboard-footer { 
+                flex-direction: column; justify-content: center; gap: 8px; 
+                padding: 15px; height: auto; 
+            }
+            .footer-desc { display: none; }
+        }
         @media (max-width: 500px) {
-            .header {
-                padding: 15px 20px;
-            }
-            .header img {
-                height: 35px;
-            }
-            .container {
-                padding: 30px 20px;
-            }
-            .tab-btn {
-                font-size: 13px;
-                padding: 10px 5px;
-            }
+            .header { padding: 15px 20px; }
+            .header img { height: 35px; }
+            .container { padding: 30px 20px; }
+            .tab-btn { font-size: 13px; padding: 10px 5px; }
         }
     </style>
 </head>
 <body>
 
 <header class="header">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Danantara_Indonesia_%28no_SW%29.svg/3840px-Danantara_Indonesia_%28no_SW%29.svg.png" alt="Logo Danantara">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Danantara_Indonesia.svg/1280px-Danantara_Indonesia.svg.png" alt="Logo Danantara">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/POSIND_2023.svg/330px-POSIND_2023.svg.png" alt="Logo PosIND">
 </header>
 
@@ -307,27 +342,35 @@
     </div>
 </div>
 
+<!-- FOOTER DASHBOARD -->
+<footer class="dashboard-footer">
+    <div class="footer-brand">
+        <i data-lucide="layers" style="color: #EF4123; width: 18px; height: 18px;"></i>
+        PosNew Hub
+    </div>
+    <p class="footer-desc">Sistem utilitas ini dikembangkan secara independen untuk optimalisasi efisiensi layanan logistik B2B dan Ritel.</p>
+    <div class="footer-creator-badge">
+        <i data-lucide="code-2" style="color: #EF4123; width: 14px; height: 14px;"></i>
+        Inovasi oleh <strong>Ikhsan Radiansyah</strong> &copy; 2026
+    </div>
+</footer>
+
 <canvas id="canvas"></canvas>
 
+<!-- SCRIPT LOGIKA APLIKASI -->
 <script>
-    // State Aplikasi
     let currentType = 'KHI'; 
-    
-    // Inisialisasi Gambar Template
     let templateImg = new Image();
     templateImg.crossOrigin = "anonymous"; 
     templateImg.src = 'template-kosong-KHI.png'; 
 
-    // Fungsi untuk berganti Tab
     function switchTab(type) {
         currentType = type;
 
-        // Update Class Active di Tombol Tab
         document.getElementById('tab-KHI').classList.remove('active');
         document.getElementById('tab-KUI').classList.remove('active');
         document.getElementById('tab-' + type).classList.add('active');
 
-        // Update Source Gambar & Teks UI
         const subtitleEl = document.getElementById('dynamicSubtitle');
         const inputPlaceholder = document.getElementById('kbihName');
 
@@ -342,7 +385,6 @@
         }
     }
 
-    // Fungsi Generate Gambar
     function generateCard() {
         const kbihName = document.getElementById('kbihName').value;
         const refCode = document.getElementById('refCode').value;
@@ -357,25 +399,21 @@
             return;
         }
 
-        // Efek loading pada tombol
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
         btn.style.pointerEvents = 'none';
 
-        // PISAHKAN KOORDINAT SECARA TOTAL KARENA TEMPLATE SANGAT BERBEDA
         let cfg = {};
         
         if (currentType === 'KHI') {
-            // KOORDINAT KARGO HAJI (Posisi Jauh Lebih Bawah & Lebar)
             cfg = {
-                titleY: 320,   // Di area abu-abu di atas garis emas
-                qrX: 85,     // Pas margin kiri kotak putih KHI
-                qrY: 455,    // Mulai dari area putih KHI
-                qrSize: 510, // Ukuran kotak KHI besar
-                codeY: 1022   // Tengah-tengah kapsul hijau KHI
+                titleY: 320,   
+                qrX: 85,     
+                qrY: 455,    
+                qrSize: 510, 
+                codeY: 1022   
             };
         } else {
-            // KOORDINAT KARGO UMROH (Posisi Jauh Lebih Atas & Sempit)
             cfg = {
                 titleY: 340, 
                 qrX: 100,     
@@ -389,14 +427,11 @@
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Menggunakan dimensi absolut 1280x1920
             canvas.width = 1280;
             canvas.height = 1920;
 
-            // 1. Gambar Background Template
             ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-            // 2. Gambar Teks Nama KBIH/Travel (Otomatis Kapital)
             const namaKapital = kbihName.toUpperCase();
             const kodeKapital = refCode.toUpperCase();
 
@@ -404,7 +439,7 @@
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             
-            ctx.fillStyle = "#E84F2A"; // Warna font oranye
+            ctx.fillStyle = "#E84F2A"; 
             ctx.strokeStyle = "white";
             ctx.lineWidth = 10; 
             ctx.lineJoin = "round"; 
@@ -413,13 +448,11 @@
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
 
-            // Batas maksimal lebar teks agar tidak menabrak pinggir gambar
             ctx.strokeText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
             ctx.fillText(namaKapital, canvas.width / 2, cfg.titleY, 1180);
 
             ctx.shadowColor = "transparent";
 
-            // 3. Generate QR Code
             const qrCanvas = document.createElement('canvas');
             new QRious({
                 element: qrCanvas,
@@ -429,110 +462,38 @@
                 level: 'H'
             });
 
-            // Tumpuk kotak putih tambahan untuk memastikan area QR Code tertutup bersih
             ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize);
             ctx.drawImage(qrCanvas, cfg.qrX, cfg.qrY, cfg.qrSize, cfg.qrSize); 
 
-            // 4. Gambar Teks Kode Referral di Dalam Kapsul Hijau
             ctx.font = "bold 50px 'Arial Bold', 'Helvetica Neue', sans-serif"; 
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillStyle = "#FFD700"; // Kuning emas
+            ctx.fillStyle = "#FFD700"; 
             
             const textX = cfg.qrX + (cfg.qrSize / 2); 
             ctx.fillText(kodeKapital, textX, cfg.codeY);
 
-            // 5. Proses Download
             const link = document.createElement('a');
             const typeString = currentType === 'KHI' ? 'Haji' : 'Umroh';
             link.download = `Referral_${typeString}_${namaKapital.replace(/\s+/g, '_')}_${kodeKapital}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            // Kembalikan tombol ke keadaan semula
             btn.innerHTML = originalText;
             btn.style.pointerEvents = 'auto';
 
         }, 100); 
     }
 </script>
-<!-- Modern SaaS Footer (SLIM, DARK & FULL-WIDTH) -->
-<style>
-    .modern-footer {
-        width: 100%; /* Memaksa footer memanjang dari ujung ke ujung */
-        box-sizing: border-box; /* Mencegah footer tumpah keluar layar */
-        margin-top: 4rem; 
-        padding: 2rem 1rem 1.5rem 1rem; 
-        background-color: #0f172a; 
-        border-top: 4px solid #FF5722; 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.8rem; 
-        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .footer-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #f8fafc; 
-        font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: 0.5px;
-    }
-    .footer-desc {
-        color: #94a3b8; 
-        font-size: 0.85rem;
-        text-align: center;
-        max-width: 500px;
-        line-height: 1.5;
-        margin: 0;
-    }
-    .footer-creator-badge {
-        margin-top: 0.5rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255, 87, 34, 0.1);
-        border: 1px solid rgba(255, 87, 34, 0.2);
-        padding: 6px 16px; 
-        border-radius: 30px;
-        color: #e2e8f0;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
-    }
-    .footer-creator-badge:hover {
-        background: rgba(255, 87, 34, 0.2);
-        border-color: rgba(255, 87, 34, 0.5);
-        box-shadow: 0 0 10px rgba(255, 87, 34, 0.2);
-        transform: translateY(-2px);
-    }
-    .footer-creator-badge strong {
-        color: #FF5722;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-    }
-</style>
 
-<footer class="modern-footer">
-    <div class="footer-brand">
-        <i data-lucide="layers" style="color: #FF5722; width: 20px; height: 20px;"></i>
-        PosNew Hub
-    </div>
-    <p class="footer-desc">
-        Sistem utilitas ini dikembangkan secara independen untuk optimalisasi efisiensi layanan logistik B2B dan Ritel.
-    </p>
-    <div class="footer-creator-badge">
-        <i data-lucide="code-2" style="color: #FF5722; width: 14px; height: 14px;"></i>
-        Inovasi oleh <strong>Ikhsan Radiansyah</strong> &copy; 2026
-    </div>
-</footer>
-
-<!-- Pastikan pemanggil ikon ini tetap ada di paling bawah -->
+<!-- SCRIPT IKON LUCIDE -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-    lucide.createIcons();
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 </script>
+
 </body>
 </html>
